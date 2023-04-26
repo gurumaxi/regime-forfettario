@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regime Forfettario Rechner</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+      * {
+        box-sizing: border-box;
+        font-family: 'Open Sans', sans-serif;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        margin: 15px;
+      }
+
+      h2 {
+        font-weight: 500;
+        margin-bottom: 35px;
+      }
+
+      .row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      label {
+        font-weight: 500;
+        font-size: 14px;
+      }
+
+      input,
+      select {
+        width: 100px;
+        height: 40px;
+        font-size: 16px;
+        outline: none;
+        border-radius: 10px;
+        border: 1px solid lightgrey;
+        text-align: right;
+        padding: 0 8px;
+      }
+
+      button {
+        height: 35px;
+        margin-bottom: 50px;
+        font-size: 16px;
+      }
+
+      #result {
+        display: none;
+      }
+
+      .number {
+        font-weight: 500;
+      }
+
+      .chip {
+        background-color: #4ca73c;
+        color: white;
+        padding: 5px 8px;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2>Regime forfettario Rechner</h2>
+    <div class="row">
+      <label for="gesamtes_einkommen">Gesamtes Einkommen in €</label>
+      <input type="number" id="gesamtes_einkommen">
+    </div>
+    <div class="row">
+      <label for="cdr">CDR (coefficiente di redditività)</label>
+      <select id="cdr">
+        <option value="40">40%</option>
+        <option value="54">54%</option>
+        <option value="62">62%</option>
+        <option value="67" selected>67%</option>
+        <option value="78">78%</option>
+        <option value="86">86%</option>
+      </select>
+    </div>
+    <div class="row">
+      <label for="tax_rate">Steuersatz</label>
+      <select id="tax_rate">
+        <option value="5" selected>5%</option>
+        <option value="15">15%</option>
+      </select>
+    </div>
+    <div class="row">
+      <label for="inps_rate">INPS Rate in %</label>
+      <input type="number" id="inps_rate" value="24.5">
+    </div>
+    <button onClick="computeResult()">Abgaben berechnen</button>
+    <div id="result">
+      <div class="row">
+        <div class="text">Steuern</div>
+        <div class="number" id="result_taxes">5000€</div>
+      </div>
+      <div class="row">
+        <div class="text">Abgaben INPS</div>
+        <div class="number" id="result_inps">5000€</div>
+      </div>
+      <div class="row">
+        <div class="text">Gewinn</div>
+        <div class="number chip" id="result_total">5000€</div>
+      </div>
+      <div class="row">
+        <div class="text">Gewinn - monatlich</div>
+        <div class="number chip" id="result_total_monthly">5000€</div>
+      </div>
+    </div>
+  </body>
+
+  <script>
+
+    function computeResult() {
+      const totalIncome = Number(document.querySelector('#gesamtes_einkommen').value);
+      const cdr = Number(document.querySelector('#cdr').value) / 100;
+      const taxRate = Number(document.querySelector('#tax_rate').value) / 100;
+      const inpsRate = Number(document.querySelector('#inps_rate').value) / 100;
+
+      const base = totalIncome * cdr;
+      const inpsTax = base * inpsRate;
+      const taxes = (base - inpsTax) * taxRate;
+
+      const total = totalIncome - inpsTax - taxes;
+      const totalMonthly = total / 12;
+
+      const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' });
+      document.querySelector('#result_taxes').innerHTML = formatter.format(taxes);
+      document.querySelector('#result_inps').innerHTML = formatter.format(inpsTax);
+      document.querySelector('#result_total').innerHTML = formatter.format(total);
+      document.querySelector('#result_total_monthly').innerHTML = formatter.format(totalMonthly);
+
+      document.querySelector('#result').style.display = 'block';
+    }
+  </script>
+
+</html>
