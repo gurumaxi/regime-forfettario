@@ -18,9 +18,12 @@
       }
 
       body {
+        max-width: 500px;
+        width: 100%;
+        margin: auto;
         display: flex;
         flex-direction: column;
-        margin: 15px;
+        padding: 15px;
       }
 
       h2 {
@@ -51,6 +54,11 @@
         border: 1px solid lightgrey;
         text-align: right;
         padding: 0 8px;
+      }
+
+      input[type=checkbox] {
+        width: 20px;
+        height: 20px;
       }
 
       button {
@@ -104,6 +112,10 @@
       <label for="inps_rate">INPS Rate in %</label>
       <input type="number" id="inps_rate" value="24.5">
     </div>
+    <div class="row">
+      <label for="inps_rate">INPS Rate reduziert um 35%</label>
+      <input type="checkbox" id="inps_rate_reduced">
+    </div>
     <button onClick="computeResult()">Abgaben berechnen</button>
     <div id="result">
       <div class="row">
@@ -132,9 +144,10 @@
       const cdr = Number(document.querySelector('#cdr').value) / 100;
       const taxRate = Number(document.querySelector('#tax_rate').value) / 100;
       const inpsRate = Number(document.querySelector('#inps_rate').value) / 100;
+      const inpsRateReduced = document.querySelector('#inps_rate_reduced').checked;
 
       const base = totalIncome * cdr;
-      const inpsTax = base * inpsRate;
+      const inpsTax = base * (inpsRateReduced ? inpsRate * 0.65 : inpsRate);
       const taxes = (base - inpsTax) * taxRate;
 
       const total = totalIncome - inpsTax - taxes;
